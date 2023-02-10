@@ -11,7 +11,7 @@
 #include <chrono>
 #include <CL/sycl.hpp>
 #include <oneapi/dpl/random>
-#include "test.h"
+#include "header.h"
 using namespace std;
 using namespace sycl;
 typedef pair<double, double> pdd;
