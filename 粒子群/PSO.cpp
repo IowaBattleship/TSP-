@@ -10,18 +10,18 @@ using namespace std;
 
 #define dataFile "D:\\test.txt"
 #define numThread 16
-#define PopSize 10		//Á£×ÓÊı
-#define iterNum 2000	//×î´óµü´ú´ÎÊı
-#define C_1 2			//×ÔÉíÑ§Ï°Òò×Ó
-#define C_2 2			//ÈºÌåÑ§Ï°Òò×Ó
-#define _W 0.8			//ËÙ¶È¹ßĞÔ
+#define PopSize 10		//ç²’å­æ•°
+#define iterNum 2000	//æœ€å¤§è¿­ä»£æ¬¡æ•°
+#define C_1 2			//è‡ªèº«å­¦ä¹ å› å­
+#define C_2 2			//ç¾¤ä½“å­¦ä¹ å› å­
+#define _W 0.8			//é€Ÿåº¦æƒ¯æ€§
 
 double vmax = 1, vmin = -1;
 class City
 {
 public:
-	int index;	//³ÇÊĞĞòºÅ
-	double x, y;//³ÇÊĞµãµÄ¶şÎ¬×ø±ê
+	int index;	//åŸå¸‚åºå·
+	double x, y;//åŸå¸‚ç‚¹çš„äºŒç»´åæ ‡
 
 	City() {}
 	City(int _i, double _x, double _y)
@@ -47,8 +47,8 @@ public:
 class Graph
 {
 public:
-	vector<City> city;//³ÇÊĞÊı×é
-	double** distance;//³ÇÊĞ¼äµÄ¾àÀë¾ØÕó
+	vector<City> city;//åŸå¸‚æ•°ç»„
+	double** distance;//åŸå¸‚é—´çš„è·ç¦»çŸ©é˜µ
 	int numCity;
 
 	void init(string filename)
@@ -56,7 +56,7 @@ public:
 		ReadFile(filename);
 		calDistance();
 	}
-	void ReadFile(string txtfilename)//¶ÁÈ¡³ÇÊĞ×ø±êÎÄ¼şµÄº¯Êı
+	void ReadFile(string txtfilename)//è¯»å–åŸå¸‚åæ ‡æ–‡ä»¶çš„å‡½æ•°
 	{
 		ifstream file(txtfilename, ios::in);
 		double x = 0, y = 0;
@@ -70,7 +70,7 @@ public:
 			numCity = i;
 		}
 		else {
-			cout << "ÎÄ¼ş²»´æÔÚ";
+			cout << "æ–‡ä»¶ä¸å­˜åœ¨";
 			perror("!no such file");
 		}
 		file.close();
@@ -99,10 +99,10 @@ public:
 	}
 	void printGraph()
 	{
-		cout << "³ÇÊĞ±àºÅ " << "×ø±êx" << " " << "×ø±êy" << endl;
+		cout << "åŸå¸‚ç¼–å· " << "åæ ‡x" << " " << "åæ ‡y" << endl;
 		for (int i = 0; i < numCity; i++)
 			city[i].printCity();
-		cout << "¾àÀë¾ØÕó£º " << endl;
+		cout << "è·ç¦»çŸ©é˜µï¼š " << endl;
 		for (int i = 0; i < numCity; i++)
 		{
 			for (int j = 0; j < numCity; j++)
@@ -115,9 +115,9 @@ public:
 		}
 	}
 };
-Graph graph;//¶¨ÒåÈ«¾Ö¶ÔÏóÍ¼,·ÅÔÚGraphÀàºó
+Graph graph;//å®šä¹‰å…¨å±€å¯¹è±¡å›¾,æ”¾åœ¨Graphç±»å
 
-int randomInt(const int& l, const int& r) // Éú³É[l, r]Ö®¼äµÄÒ»¸öËæ»úÕûÊı
+int randomInt(const int& l, const int& r) // ç”Ÿæˆ[l, r]ä¹‹é—´çš„ä¸€ä¸ªéšæœºæ•´æ•°
 {
 	random_device rd;
 	mt19937 e(rd());
@@ -136,13 +136,13 @@ int* doShuffle(int n)
 	return res;
 }
 
-//¹éµ½Particle
+//å½’åˆ°Particle
 class Particle
 {
 public:
-	int* x;//Á£×ÓµÄÎ»ÖÃ
-	int* v;//Á£×ÓµÄËÙ¶È
-	double fitness;//ÊÊÓ¦¶È£¬Ô½Ğ¡Ô½ºÃ
+	int* x;//ç²’å­çš„ä½ç½®
+	int* v;//ç²’å­çš„é€Ÿåº¦
+	double fitness;//é€‚åº”åº¦ï¼Œè¶Šå°è¶Šå¥½
 
 	void Init()
 	{
@@ -170,7 +170,7 @@ public:
 		}
 		cout << fitness << endl;
 	}
-	double Evaluate()//¼ÆËãÁ£×ÓÊÊÓ¦ÖµµÄº¯Êı
+	double Evaluate()//è®¡ç®—ç²’å­é€‚åº”å€¼çš„å‡½æ•°
 	{
 		double fitnessvalue = 0;
 		//#pragma omp parallel for reduction(+:fitnessvalue)
@@ -181,18 +181,18 @@ public:
 		return fitnessvalue;
 	}
 };
-void AdjustParticle(Particle p, int citycount)//µ÷ÕûÁ£×ÓÓĞĞ§ĞÔµÄº¯Êı£¬Ê¹µÃÁ£×ÓµÄÎ»ÖÃ·ûºÏTSPÎÊÌâ½âµÄÒ»¸öÅÅÁĞ
+void AdjustParticle(Particle p, int citycount)//è°ƒæ•´ç²’å­æœ‰æ•ˆæ€§çš„å‡½æ•°ï¼Œä½¿å¾—ç²’å­çš„ä½ç½®ç¬¦åˆTSPé—®é¢˜è§£çš„ä¸€ä¸ªæ’åˆ—
 {
 	int* route = new int [citycount];//1-citycount
-	bool* flag = new bool [citycount] ;//¶ÔÓ¦routeÊı×éÖĞÊÇ·ñÔÚÁ£×ÓµÄÎ»ÖÃÖĞ´æÔÚµÄÊı×é£¬²Î¿¼Êı×éÎªroute
-	int* biaoji = new int [citycount];//¶ÔÁ£×ÓÃ¿¸öÔªËØ½øĞĞ±ê¼ÇµÄÊı×é,²Î¿¼Êı×éÎªÁ£×ÓÎ»ÖÃx
+	bool* flag = new bool [citycount] ;//å¯¹åº”routeæ•°ç»„ä¸­æ˜¯å¦åœ¨ç²’å­çš„ä½ç½®ä¸­å­˜åœ¨çš„æ•°ç»„ï¼Œå‚è€ƒæ•°ç»„ä¸ºroute
+	int* biaoji = new int [citycount];//å¯¹ç²’å­æ¯ä¸ªå…ƒç´ è¿›è¡Œæ ‡è®°çš„æ•°ç»„,å‚è€ƒæ•°ç»„ä¸ºç²’å­ä½ç½®x
 	for (int j = 0; j < citycount; j++)
 	{
 		route[j] = j + 1;
 		flag[j] = false;
 		biaoji[j] = 0;
 	}
-	//Ê×ÏÈÅĞ¶ÏÁ£×ÓpµÄÎ»ÖÃÖĞÊÇ·ñÓĞÄ³¸ö³ÇÊĞÇÒÎ¨Ò»£¬ÈôÓĞÇÒÎ¨Ò»£¬Ôò¶ÔÓ¦flagµÄÖµÎªtrue,
+	//é¦–å…ˆåˆ¤æ–­ç²’å­pçš„ä½ç½®ä¸­æ˜¯å¦æœ‰æŸä¸ªåŸå¸‚ä¸”å”¯ä¸€ï¼Œè‹¥æœ‰ä¸”å”¯ä¸€ï¼Œåˆ™å¯¹åº”flagçš„å€¼ä¸ºtrue,
 	for (int j = 0; j < citycount; j++)
 	{
 		int num = 0;
@@ -200,23 +200,23 @@ void AdjustParticle(Particle p, int citycount)//µ÷ÕûÁ£×ÓÓĞĞ§ĞÔµÄº¯Êı£¬Ê¹µÃÁ£×ÓµÄ
 		{
 			if (p.x[k] == route[j])
 			{
-				biaoji[k] = 1;//ËµÃ÷Á£×ÓÖĞµÄkºÅÔªËØ¶ÔÓ¦µÄ³ÇÊĞÔÚrouteÖĞ£¬²¢ÇÒÊÇµÚÒ»´Î³öÏÖ²Å½øĞĞ±ê¼Ç
+				biaoji[k] = 1;//è¯´æ˜ç²’å­ä¸­çš„kå·å…ƒç´ å¯¹åº”çš„åŸå¸‚åœ¨routeä¸­ï¼Œå¹¶ä¸”æ˜¯ç¬¬ä¸€æ¬¡å‡ºç°æ‰è¿›è¡Œæ ‡è®°
 				num++; break;
 			}
 		}
-		if (num == 0) flag[j] = false;//Á£×ÓÂ·ÏßÖĞÃ»ÓĞroute[j]Õâ¸ö³ÇÊĞ
-		else if (num == 1) flag[j] = true;//Á£×ÓÂ·ÏßÖĞÓĞroute[j]Õâ¸ö³ÇÊĞ
+		if (num == 0) flag[j] = false;//ç²’å­è·¯çº¿ä¸­æ²¡æœ‰route[j]è¿™ä¸ªåŸå¸‚
+		else if (num == 1) flag[j] = true;//ç²’å­è·¯çº¿ä¸­æœ‰route[j]è¿™ä¸ªåŸå¸‚
 	}
 	for (int k = 0; k < citycount; k++)
 	{
-		if (flag[k] == false)//Á£×ÓÂ·ÏßÖĞÃ»ÓĞroute[k]Õâ¸ö³ÇÊĞ£¬ĞèÒª½«Õâ¸ö³ÇÊĞ¼ÓÈëµ½Á£×ÓÂ·ÏßÖĞ
+		if (flag[k] == false)//ç²’å­è·¯çº¿ä¸­æ²¡æœ‰route[k]è¿™ä¸ªåŸå¸‚ï¼Œéœ€è¦å°†è¿™ä¸ªåŸå¸‚åŠ å…¥åˆ°ç²’å­è·¯çº¿ä¸­
 		{
 			int i = 0;
 			for (; i < citycount; i++)
 			{
 				if (biaoji[i] != 1)break;
 			}
-			p.x[i] = route[k];//¶ÔÓÚ±ê¼ÇÎª0µÄ½øĞĞÌæ»»
+			p.x[i] = route[k];//å¯¹äºæ ‡è®°ä¸º0çš„è¿›è¡Œæ›¿æ¢
 			biaoji[i] = 1;
 		}
 	}	
@@ -224,15 +224,15 @@ void AdjustParticle(Particle p, int citycount)//µ÷ÕûÁ£×ÓÓĞĞ§ĞÔµÄº¯Êı£¬Ê¹µÃÁ£×ÓµÄ
 class PSO
 {
 public:
-	Particle* particle;		//ËùÓµÓĞµÄËùÓĞÁ£×Ó
-	Particle* pbest, gbest;//Ã¿¸öÁ£×ÓµÄÀúÊ·×îÓÅÒÔ¼°È«¾Ö×îÓÅ
-	double c1, c2, w;		//Ñ§Ï°²ÎÊı
-	int NumIter;			//µü´ú´ÎÊı
-	int popsize;			//Á£×ÓÊı
+	Particle* particle;		//æ‰€æ‹¥æœ‰çš„æ‰€æœ‰ç²’å­
+	Particle* pbest, gbest;//æ¯ä¸ªç²’å­çš„å†å²æœ€ä¼˜ä»¥åŠå…¨å±€æœ€ä¼˜
+	double c1, c2, w;		//å­¦ä¹ å‚æ•°
+	int NumIter;			//è¿­ä»£æ¬¡æ•°
+	int popsize;			//ç²’å­æ•°
 
 	void Init(int Pop_Size, int numIter, double C1, double C2, double W)
 	{
-		//²ÎÊı³õÊ¼»¯
+		//å‚æ•°åˆå§‹åŒ–
 		NumIter = numIter;
 		c1 = C1;
 		c2 = C2;
@@ -244,7 +244,7 @@ public:
 		pbest = new Particle[popsize];
 		for (int i = 0; i < popsize; i++)
 		{
-			//Ã¿Ò»¸öÁ£×Ó½øĞĞ³õÊ¼»¯£¬²¢ÓÃµÚÒ»´ÎµÄÊÊÓ¦¶È´ú±í¸ÃÁ£×ÓµÄ×ÔÉíÀúÊ·×î¼Ñ
+			//æ¯ä¸€ä¸ªç²’å­è¿›è¡Œåˆå§‹åŒ–ï¼Œå¹¶ç”¨ç¬¬ä¸€æ¬¡çš„é€‚åº”åº¦ä»£è¡¨è¯¥ç²’å­çš„è‡ªèº«å†å²æœ€ä½³
 			particle[i].Init();
 			pbest[i].Init();
 			for (int j = 0; j < graph.numCity; j++)
@@ -254,7 +254,7 @@ public:
 			}
 		}
 		gbest.Init();
-		gbest.fitness = INFINITY;//ÎªÈ«¾Ö×îÓÅÁ£×Ó³õÊ¼»¯
+		gbest.fitness = INFINITY;//ä¸ºå…¨å±€æœ€ä¼˜ç²’å­åˆå§‹åŒ–
 		for (int i = 0; i < popsize; i++)
 		{
 			if (pbest[i].fitness < gbest.fitness)
@@ -269,7 +269,7 @@ public:
 	{
 		for (int i = 0; i < popsize; i++)
 		{
-			std::cout << "Á£×Ó" << i + 1 << "->";
+			std::cout << "ç²’å­" << i + 1 << "->";
 			particle[i].printParticle();
 		}
 	}
@@ -279,39 +279,39 @@ public:
 		//Map_City.printGraph();
 		vmax = Vlimitabs; vmin = -Vlimitabs;
 		Init(Pop_size, itetime, C1, C2, W);
-		//std::cout << "³õÊ¼»¯ºóµÄÖÖÈºÈçÏÂ£º" << endl;
+		//std::cout << "åˆå§‹åŒ–åçš„ç§ç¾¤å¦‚ä¸‹ï¼š" << endl;
 		//printPSO();
 		omp_set_num_threads(numThread);
 		
-			for (int iter = 0; iter < NumIter; iter++)//µü´ú´ÎÊı
+			for (int iter = 0; iter < NumIter; iter++)//è¿­ä»£æ¬¡æ•°
 			{
 			#pragma omp parallel
 			{
 				#pragma omp for
-				for (int i = 0; i < popsize; i++)//Á£×ÓÊıÁ¿
+				for (int i = 0; i < popsize; i++)//ç²’å­æ•°é‡
 				{
-					//¸üĞÂÁ£×ÓËÙ¶ÈºÍÎ»ÖÃ
+					//æ›´æ–°ç²’å­é€Ÿåº¦å’Œä½ç½®
 					for (int j = 0; j < graph.numCity; j++)
 					{
-						//¹«Ê½1¸üĞÂËÙ¶È
+						//å…¬å¼1æ›´æ–°é€Ÿåº¦
 						particle[i].v[j] = (int)(w * particle[i].v[j] + 
 							c1 * randomInt(0, 1) * (pbest[i].x[j] - particle[i].x[j]) + 
 							c2 * randomInt(0, 1) * (gbest.x[j] - particle[i].x[j]));
-						if (particle[i].v[j] > vmax)//Á£×ÓËÙ¶ÈÔ½½çµ÷Õû
+						if (particle[i].v[j] > vmax)//ç²’å­é€Ÿåº¦è¶Šç•Œè°ƒæ•´
 							particle[i].v[j] = (int)vmax;
 						else if (particle[i].v[j] < vmin)
 							particle[i].v[j] = (int)vmin;
 
-						//¹«Ê½2¸üĞÂÎ»ÖÃ
+						//å…¬å¼2æ›´æ–°ä½ç½®
 						particle[i].x[j] += particle[i].v[j];
-						if (particle[i].x[j] > graph.numCity)particle[i].x[j] = graph.numCity;//Á£×ÓÎ»ÖÃÔ½½çµ÷Õû
+						if (particle[i].x[j] > graph.numCity)particle[i].x[j] = graph.numCity;//ç²’å­ä½ç½®è¶Šç•Œè°ƒæ•´
 						else if (particle[i].x[j] < 1) particle[i].x[j] = 1;
 					}
-					//Á£×ÓÎ»ÖÃÓĞĞ§ĞÔµ÷Õû£¬±ØĞëÂú×ã½â¿Õ¼äµÄÌõ¼ş
+					//ç²’å­ä½ç½®æœ‰æ•ˆæ€§è°ƒæ•´ï¼Œå¿…é¡»æ»¡è¶³è§£ç©ºé—´çš„æ¡ä»¶
 					AdjustParticle(particle[i], graph.numCity);
 					particle[i].Evaluate();
 					//pbest[i].Evaluate();
-					//¸üĞÂµ¥¸öÁ£×ÓµÄÀúÊ·¼«Öµ
+					//æ›´æ–°å•ä¸ªç²’å­çš„å†å²æå€¼
 					if (particle[i].fitness < pbest[i].fitness)
 					{
 						for (int j = 0; j < graph.numCity; j++)
@@ -323,7 +323,7 @@ public:
 				//cout << "thread: " << id << '\t';
 				//pbest[id].printParticle();
 			}
-			//¸üĞÂÈ«¾Ö×îÓÅ½â
+			//æ›´æ–°å…¨å±€æœ€ä¼˜è§£
 			for (int k = 0; k < popsize; k++)
 			{
 				if (pbest[k].fitness < gbest.fitness)
@@ -336,7 +336,7 @@ public:
 			if ((iter + 1) % 1000 == 0) 
 			//if(iter == iterNum - 1)
 			{
-				std::cout << "µÚ" << iter + 1 << "´Îµü´úºóµÄ×îºÃÁ£×Ó£º";
+				std::cout << "ç¬¬" << iter + 1 << "æ¬¡è¿­ä»£åçš„æœ€å¥½ç²’å­ï¼š";
 				
 				//printPSO();
 				gbest.printParticle();
@@ -347,7 +347,7 @@ public:
 //PSO pso;
 int main()
 {
-	std::cout << "Á£×ÓÈºÓÅ»¯Ëã·¨Çó½âTSPÂÃĞĞÉÌÎÊÌâ" << endl;
+	std::cout << "ç²’å­ç¾¤ä¼˜åŒ–ç®—æ³•æ±‚è§£TSPæ—…è¡Œå•†é—®é¢˜" << endl;
 
 	graph.init(dataFile);
 	//graph.printGraph();
